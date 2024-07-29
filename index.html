@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: black;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        #message {
+            text-align: center;
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        #sub-message {
+            text-align: center;
+            font-size: 24px;
+        }
+        #fireworksCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        .highlight {
+            color: #ff69b4; /* Warna pink */
+        }
+    </style>
+</head>
+<body>
+    <div id="message">Happy Birthday, <span class="highlight">KANSHA <3</span>!</div>
+    <div id="sub-message">Wishing you all the best on your special day! SEMANGATT!!!</div>
+    <canvas id="fireworksCanvas"></canvas>
+    <script>
+        const canvas = document.getElementById('fireworksCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        class Firework {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.particles = [];
+                this.createParticles();
+            }
+
+            createParticles() {
+                for (let i = 0; i < 100; i++) {
+                    const angle = Math.random() * 2 * Math.PI;
+                    const speed = Math.random() * 4 + 2;
+                    this.particles.push({
+                        x: this.x,
+                        y: this.y,
+                        vx: speed * Math.cos(angle),
+                        vy: speed * Math.sin(angle),
+                        alpha: 1
+                    });
+                }
+            }
+
+            update() {
+                this.particles.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += 0.05; // gravity
+                    p.alpha -= 0.02; // fade out
+                });
+                this.particles = this.particles.filter(p => p.alpha > 0);
+            }
+
+            draw() {
+                this.particles.forEach(p => {
+                    ctx.fillStyle = `rgba(255, 255, 255, ${p.alpha})`;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, 2, 0, 2 * Math.PI);
+                    ctx.fill();
+                });
+            }
+        }
+
+        const fireworks = [];
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            if (Math.random() < 0.05) {
+                const x = Math.random() * canvas.width;
+                const y = Math.random() * canvas.height;
+                fireworks.push(new Firework(x, y));
+            }
+
+            fireworks.forEach(fw => {
+                fw.update();
+                fw.draw();
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+    </script>
+</body>
+  </html>
